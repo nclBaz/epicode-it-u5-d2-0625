@@ -1,11 +1,9 @@
 package riccardogulin.u5d2.config;
 
 import com.github.javafaker.Faker;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.*;
 import riccardogulin.u5d2.entities.BackendStudent;
 import riccardogulin.u5d2.entities.FrontendStudent;
 import riccardogulin.u5d2.entities.FullStackStudent;
@@ -29,21 +27,21 @@ public class ConfigClass {
 	}
 
 	@Bean
-	public String getAdminName(@Value("${postgres.password}") String name) {
+	public String getAdminName(@Value("${postgres.username}") String name) {
 		return name;
 	}
 
-//	@Bean
-//	public String getAdminName2() {
-//		return "Antonino";
-//	}
+	@Bean
+	public String getAdminName2() {
+		return "Antonino";
+	}
 
 	@Bean
 	@Scope("prototype") // Scope è un'annotazione OPZIONALE, di default sono tutti SINGLETON
 	// SINGLETON = in tutta l'applicazione esiste un'UNICA COPIA dell'oggetto. Ogni volta che faccio .getBean() mi tornerà sempre lo stesso
 	// PROTOTYPE = ogni volta che faccio .getBean() mi tornerà una NUOVA COPIA dell'oggetto
 
-	public FrontendStudent getFEStudent(String name) { // @Value mi permette di leggere i valori dalle variabili
+	public FrontendStudent getFEStudent(@Qualifier("getAdminName2") String name) { // @Value mi permette di leggere i valori dalle variabili
 		// dentro application.properties (non dimenticare di specificare @PropertySource("application.properties")
 		return new FrontendStudent(name, "Baglio");
 	}
@@ -59,7 +57,7 @@ public class ConfigClass {
 	}
 
 	@Bean(name = "giacomino")
-	// @Primary // Il Primary diventa una sorta di caso di default
+	@Primary // Il Primary diventa una sorta di caso di default
 	// Quindi, se ci dovessero essere ambiguità (cioè Spring non sa quale Bean
 	// scegliere), verrebbe scelto questo Bean Primary come "ultima spiaggia"
 	public FullStackStudent getFSStudent() {
